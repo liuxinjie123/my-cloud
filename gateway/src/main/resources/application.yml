@@ -1,0 +1,50 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lowerCaseServiceId: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/n-user/**
+          filters:
+            - StripPrefix=1
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/n-order/**
+          filters:
+            - StripPrefix=1
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/n-product/**
+          filters:
+            - StripPrefix=1
+
+        - id: store-service
+          uri: lb://store-service
+          predicates:
+            - Path=/n-store/**
+          filters:
+            - StripPrefix=1
+    sentinel:
+      transport:
+        port: 15000
+        dashboard: localhost:8748
+
+  main:
+    web-application-type: reactive
